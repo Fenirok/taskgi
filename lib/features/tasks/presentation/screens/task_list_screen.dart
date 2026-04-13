@@ -59,43 +59,6 @@ class _TaskListScreenState extends ConsumerState<TaskListScreen> {
             ),
           ),
 
-          // Expanded(
-          //   child: state.isLoading
-          //       ? const Center(child: CircularProgressIndicator())
-          //       : _groupedList(ref),
-          // ),
-
-          // Expanded(
-          //   child: state.isLoading
-          //       ? const Center(child: CircularProgressIndicator())
-          //       : notifier.filteredTasks.isEmpty
-          //       ? const Center(child: Text("No tasks found"))
-          //       : ListView.builder(
-          //     padding: const EdgeInsets.only(bottom: 80),
-          //     itemCount: notifier.filteredTasks.length,
-          //     itemBuilder: (context, index) {
-          //       final task = notifier.filteredTasks[index];
-          //
-          //       return Dismissible(
-          //         key: Key(task.id),
-          //         direction: DismissDirection.endToStart,
-          //         onDismissed: (_) {
-          //           notifier.removeTask(task.id);
-          //         },
-          //         background: Container(
-          //           alignment: Alignment.centerRight,
-          //           padding: const EdgeInsets.only(right: 20),
-          //           color: Colors.red,
-          //           child: const Icon(
-          //             Icons.delete,
-          //             color: Colors.white,
-          //           ),
-          //         ),
-          //         child: TaskCard(task: task),
-          //       );
-          //     },
-          //   ),
-          // ),
         ],
       ),
 
@@ -230,100 +193,6 @@ class _TaskListScreenState extends ConsumerState<TaskListScreen> {
     );
   }
 
-  // Widget _header() {
-  //   return Container(
-  //     width: double.infinity,
-  //     padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
-  //     decoration: const BoxDecoration(
-  //       gradient: LinearGradient(
-  //         colors: [Color(0xFF6C63FF), Color(0xFF8E85FF)],
-  //       ),
-  //       borderRadius: BorderRadius.vertical(
-  //         bottom: Radius.circular(30),
-  //       ),
-  //     ),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //
-  //         const Text(
-  //           "Hello ",
-  //           style: TextStyle(color: Colors.white70),
-  //         ),
-  //
-  //         const SizedBox(height: 4),
-  //
-  //         const Text(
-  //           "Your Tasks",
-  //           style: TextStyle(
-  //             color: Colors.white,
-  //             fontSize: 26,
-  //             fontWeight: FontWeight.bold,
-  //           ),
-  //         ),
-  //
-  //         const SizedBox(height: 12),
-  //
-  //         /// TASK COUNT
-  //         Consumer(
-  //           builder: (context, ref, _) {
-  //             final count = ref.watch(taskProvider).tasks.length;
-  //
-  //             return Text(
-  //               "$count tasks",
-  //               style: const TextStyle(color: Colors.white70),
-  //             );
-  //           },
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // Widget _groupedList(WidgetRef ref) {
-  //   final notifier = ref.read(taskProvider.notifier);
-  //   final grouped = notifier.groupedTasks;
-  //
-  //   return ListView(
-  //     padding: const EdgeInsets.only(bottom: 80),
-  //     children: grouped.entries.map((entry) {
-  //       final title = entry.key;
-  //       final tasks = entry.value;
-  //
-  //       if (tasks.isEmpty) return const SizedBox();
-  //
-  //       return Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //
-  //           /// SECTION HEADER
-  //           Padding(
-  //             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-  //             child: Text(
-  //               title,
-  //               style: const TextStyle(
-  //                 fontSize: 18,
-  //                 fontWeight: FontWeight.bold,
-  //               ),
-  //             ),
-  //           ),
-  //
-  //           /// TASKS
-  //           ...tasks.map((task) {
-  //             return Dismissible(
-  //               key: Key(task.id),
-  //               onDismissed: (_) {
-  //                 ref.read(taskProvider.notifier).removeTask(task.id);
-  //               },
-  //               background: Container(color: Colors.red),
-  //               child: TaskCard(task: task),
-  //             );
-  //           }).toList(),
-  //         ],
-  //       );
-  //     }).toList(),
-  //   );
-  // }
 
   Widget _groupedList(WidgetRef ref) {
     final notifier = ref.read(taskProvider.notifier);
@@ -414,50 +283,163 @@ class _TaskListScreenState extends ConsumerState<TaskListScreen> {
 
   /// FILTER UI
   Widget _filters(TaskNotifier notifier) {
+    final state = ref.watch(taskProvider);
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
 
-          /// Priority filter
-          DropdownButton<String>(
-            value: ref.watch(taskProvider).priorityFilter,
-            items: const [
-              DropdownMenuItem(value: 'all', child: Text("All")),
-              DropdownMenuItem(value: 'low', child: Text("Low")),
-              DropdownMenuItem(value: 'medium', child: Text("Medium")),
-              DropdownMenuItem(value: 'high', child: Text("High")),
-            ],
-            onChanged: (val) {
-              notifier.setPriorityFilter(val!);
+          /// PRIORITY FILTER
+          _filterChip(
+            label: _priorityLabel(state.priorityFilter),
+            icon: Icons.flag,
+            onTap: () {
+              _showPrioritySheet(context, notifier);
             },
           ),
 
-          /// Status filter
-          DropdownButton<String>(
-            value: ref.watch(taskProvider).statusFilter == null
-                ? 'all'
-                : ref.watch(taskProvider).statusFilter!
-                ? 'completed'
-                : 'incomplete',
-            items: const [
-              DropdownMenuItem(value: 'all', child: Text("All")),
-              DropdownMenuItem(value: 'completed', child: Text("Completed")),
-              DropdownMenuItem(value: 'incomplete', child: Text("Incomplete")),
-            ],
-            onChanged: (val) {
-              if (val == 'all') {
-                notifier.setStatusFilter(null);
-              } else if (val == 'completed') {
-                notifier.setStatusFilter(true);
-              } else {
-                notifier.setStatusFilter(false);
-              }
+          /// STATUS FILTER
+          _filterChip(
+            label: _statusLabel(state.statusFilter),
+            icon: Icons.check_circle_outline,
+            onTap: () {
+              _showStatusSheet(context, notifier);
             },
           ),
         ],
       ),
     );
   }
+
+  Widget _filterChip({
+    required String label,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(25),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 16, color: const Color(0xFF6C63FF)),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(width: 4),
+            const Icon(Icons.keyboard_arrow_down, size: 18),
+          ],
+        ),
+      ),
+    );
+  }
+  String _priorityLabel(String value) {
+    switch (value) {
+      case 'low':
+        return "Low";
+      case 'medium':
+        return "Medium";
+      case 'high':
+        return "High";
+      default:
+        return "All";
+    }
+  }
+
+  String _statusLabel(bool? value) {
+    if (value == null) return "All";
+    if (value) return "Completed";
+    return "Incomplete";
+  }
+
+  void _showPrioritySheet(BuildContext context, TaskNotifier notifier) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+
+            _sheetItem("All", () {
+              notifier.setPriorityFilter('all');
+              Navigator.pop(context);
+            }),
+
+            _sheetItem("Low", () {
+              notifier.setPriorityFilter('low');
+              Navigator.pop(context);
+            }),
+
+            _sheetItem("Medium", () {
+              notifier.setPriorityFilter('medium');
+              Navigator.pop(context);
+            }),
+
+            _sheetItem("High", () {
+              notifier.setPriorityFilter('high');
+              Navigator.pop(context);
+            }),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showStatusSheet(BuildContext context, TaskNotifier notifier) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+
+            _sheetItem("All", () {
+              notifier.setStatusFilter(null);
+              Navigator.pop(context);
+            }),
+
+            _sheetItem("Completed", () {
+              notifier.setStatusFilter(true);
+              Navigator.pop(context);
+            }),
+
+            _sheetItem("Incomplete", () {
+              notifier.setStatusFilter(false);
+              Navigator.pop(context);
+            }),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _sheetItem(String text, VoidCallback onTap) {
+    return ListTile(
+      title: Text(text),
+      onTap: onTap,
+    );
+  }
+
 }

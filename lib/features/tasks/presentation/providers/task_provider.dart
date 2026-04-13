@@ -136,14 +136,6 @@ class TaskNotifier extends StateNotifier<TaskState> {
   }
 
   /// TOGGLE COMPLETE
-  // Future<void> toggleComplete(TaskEntity task) async {
-  //   final updated = task.copyWith(
-  //     isCompleted: !task.isCompleted,
-  //   );
-  //
-  //   await updateTask(updated);
-  //   await fetchTasks();
-  // }
 
   Future<void> toggleComplete(TaskEntity task) async {
     final updated = task.copyWith(
