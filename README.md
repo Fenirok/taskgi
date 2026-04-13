@@ -137,9 +137,9 @@ The application is built using **Clean Architecture principles**, ensuring:
 ```mermaid
 flowchart TD
     UI[Login / Signup Screen]
-    State[AuthNotifier (Riverpod State)]
-    UseCase[UseCase (Login / Signup)]
-    Repo[AuthRepository (Abstraction)]
+    State[AuthNotifier - Riverpod State]
+    UseCase[UseCase - Login / Signup]
+    Repo[AuthRepository]
     RepoImpl[AuthRepositoryImpl]
     DataSource[AuthRemoteDataSource]
     Service[FirebaseAuthService]
