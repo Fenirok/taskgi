@@ -1,0 +1,42 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+
+    <!-- Gradient -->
+    <defs>
+        <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#6C63FF"/>
+            <stop offset="100%" stop-color="#7A74F9"/>
+        </linearGradient>
+    </defs>
+
+    <!-- Background (transparent like original UI asset) -->
+
+    <!-- Decorative Dots -->
+    <circle cx="110" cy="25" r="2" fill="#E0E0E0"/>
+    <circle cx="150" cy="40" r="2.5" fill="#E0E0E0"/>
+    <circle cx="165" cy="110" r="1.5" fill="#E0E0E0"/>
+    <circle cx="150" cy="170" r="3" fill="#E0E0E0"/>
+    <circle cx="50" cy="175" r="4" fill="#D1D1D1"/>
+
+    <!-- Colored Dots -->
+    <circle cx="178" cy="95" r="5" fill="#2C2C3E"/>
+    <circle cx="38" cy="65" r="4" fill="#D97A4A"/>
+    <circle cx="165" cy="145" r="7" fill="#8C84FF" opacity="0.6"/>
+
+    <!-- Sparkles -->
+    <path d="M175 50 L178 57 L185 60 L178 63 L175 70 L172 63 L165 60 L172 57 Z" fill="#F4B400"/>
+    <path d="M35 115 L37 121 L43 123 L37 125 L35 131 L33 125 L27 123 L33 121 Z" fill="#F4B400"/>
+
+    <!-- Main Rounded Square (Improved radius + gradient) -->
+    <rect x="45" y="45" width="110" height="110" rx="32" fill="url(#grad)"/>
+
+    <!-- Checkmark (Better proportion + thickness) -->
+    <path
+        d="M78 105 L95 122 L128 88"
+        stroke="#FFFFFF"
+        stroke-width="12"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        fill="none"
+    />
+
+</svg>

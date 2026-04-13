@@ -88,7 +88,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  void logout() {
+  Future<void> logout() async {
+    await loginUseCase.repository.logout();
     state = const AuthState();
   }
 }
@@ -128,3 +129,10 @@ StateNotifierProvider<AuthNotifier, AuthState>((ref) {
     signupUseCase: ref.read(signupUseCaseProvider),
   );
 });
+
+final authStateChangesProvider = StreamProvider<UserEntity?>((ref) {
+  final repository = ref.read(authRepositoryProvider);
+
+  return repository.authStateChanges;
+});
+
