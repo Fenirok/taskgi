@@ -100,14 +100,74 @@ class TaskNotifier extends StateNotifier<TaskState> {
     await fetchTasks();
   }
 
+  Map<String, List<TaskEntity>> get groupedTasks {
+    final now = DateTime.now();
+
+    final today = DateTime(now.year, now.month, now.day);
+    final tomorrow = today.add(const Duration(days: 1));
+    final nextWeek = today.add(const Duration(days: 7));
+
+    Map<String, List<TaskEntity>> groups = {
+      "Today": [],
+      "Tomorrow": [],
+      "This Week": [],
+      "Later": [],
+    };
+
+    for (final task in filteredTasks) {
+      final taskDate = DateTime(
+        task.dueDate.year,
+        task.dueDate.month,
+        task.dueDate.day,
+      );
+
+      if (taskDate == today) {
+        groups["Today"]!.add(task);
+      } else if (taskDate == tomorrow) {
+        groups["Tomorrow"]!.add(task);
+      } else if (taskDate.isBefore(nextWeek)) {
+        groups["This Week"]!.add(task);
+      } else {
+        groups["Later"]!.add(task);
+      }
+    }
+
+    return groups;
+  }
+
   /// TOGGLE COMPLETE
+  // Future<void> toggleComplete(TaskEntity task) async {
+  //   final updated = task.copyWith(
+  //     isCompleted: !task.isCompleted,
+  //   );
+  //
+  //   await updateTask(updated);
+  //   await fetchTasks();
+  // }
+
   Future<void> toggleComplete(TaskEntity task) async {
     final updated = task.copyWith(
       isCompleted: !task.isCompleted,
     );
 
-    await updateTask(updated);
-    await fetchTasks();
+
+    final updatedList = state.tasks.map((t) {
+      return t.id == task.id ? updated : t;
+    }).toList();
+
+    state = state.copyWith(tasks: updatedList);
+
+    try {
+
+      await updateTask(updated);
+    } catch (e) {
+
+      final rollbackList = state.tasks.map((t) {
+        return t.id == task.id ? task : t;
+      }).toList();
+
+      state = state.copyWith(tasks: rollbackList);
+    }
   }
 
   /// SET PRIORITY FILTER

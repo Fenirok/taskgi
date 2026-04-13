@@ -28,10 +28,10 @@ class TaskCard extends ConsumerWidget {
         ],
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
 
-          /// CHECKBOX
+          /// CHECKBOX (CENTERED)
           GestureDetector(
             onTap: () {
               notifier.toggleComplete(task);
@@ -64,7 +64,6 @@ class TaskCard extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
-                /// TITLE
                 Text(
                   task.title,
                   style: TextStyle(
@@ -78,7 +77,6 @@ class TaskCard extends ConsumerWidget {
 
                 const SizedBox(height: 4),
 
-                /// DESCRIPTION
                 Text(
                   task.description,
                   style: TextStyle(
@@ -90,44 +88,33 @@ class TaskCard extends ConsumerWidget {
                   ),
                 ),
 
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
 
-                /// FOOTER ROW (DATE + PRIORITY)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-
-                    /// DATE
-                    Text(
-                      _formatDate(task.dueDate),
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: Colors.grey,
-                      ),
-                    ),
-
-                    /// PRIORITY CHIP
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: _priorityColor(task.priority),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        task.priority.toUpperCase(),
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
+                Text(
+                  _formatDate(task.dueDate),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey,
+                  ),
                 ),
               ],
+            ),
+          ),
+
+          /// PRIORITY CHIP
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: _priorityColor(task.priority).withOpacity(0.9),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              task.priority.toUpperCase(),
+              style: const TextStyle(
+                fontSize: 10,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],
