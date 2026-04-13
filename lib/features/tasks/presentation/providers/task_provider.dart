@@ -63,7 +63,7 @@ class TaskNotifier extends StateNotifier<TaskState> {
     required this.deleteTask,
   }) : super(const TaskState());
 
-  /// 📥 FETCH TASKS
+  /// FETCH TASKS
   Future<void> fetchTasks() async {
     state = state.copyWith(isLoading: true, error: null);
 
@@ -82,25 +82,25 @@ class TaskNotifier extends StateNotifier<TaskState> {
     }
   }
 
-  /// ➕ ADD TASK
+  /// ADD TASK
   Future<void> createTask(TaskEntity task) async {
     await addTask(task);
     await fetchTasks();
   }
 
-  /// ✏️ UPDATE TASK
+  /// UPDATE TASK
   Future<void> editTask(TaskEntity task) async {
     await updateTask(task);
     await fetchTasks();
   }
 
-  /// ❌ DELETE TASK
+  /// DELETE TASK
   Future<void> removeTask(String id) async {
     await deleteTask(id);
     await fetchTasks();
   }
 
-  /// ✅ TOGGLE COMPLETE
+  /// TOGGLE COMPLETE
   Future<void> toggleComplete(TaskEntity task) async {
     final updated = task.copyWith(
       isCompleted: !task.isCompleted,
@@ -110,17 +110,17 @@ class TaskNotifier extends StateNotifier<TaskState> {
     await fetchTasks();
   }
 
-  /// 🔍 SET PRIORITY FILTER
+  /// SET PRIORITY FILTER
   void setPriorityFilter(String value) {
     state = state.copyWith(priorityFilter: value);
   }
 
-  /// 🔍 SET STATUS FILTER
+  /// SET STATUS FILTER
   void setStatusFilter(bool? value) {
     state = state.copyWith(statusFilter: value);
   }
 
-  /// 🎯 FILTERED + SORTED TASKS
+  /// FILTERED + SORTED TASKS
   List<TaskEntity> get filteredTasks {
     final filtered = state.tasks.where((task) {
       final matchPriority = state.priorityFilter == 'all' ||
