@@ -5,7 +5,7 @@ import '../../domain/entities/task_entity.dart';
 import '../providers/task_provider.dart';
 
 class AddEditTaskScreen extends ConsumerStatefulWidget {
-  final TaskEntity? task; // null = add, not null = edit
+  final TaskEntity? task;
 
   const AddEditTaskScreen({super.key, this.task});
 
@@ -46,7 +46,6 @@ class _AddEditTaskScreenState
     super.dispose();
   }
 
-  /// PICK DATE
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
       context: context,
@@ -62,7 +61,6 @@ class _AddEditTaskScreenState
     }
   }
 
-  /// SAVE TASK
   Future<void> _saveTask() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -97,88 +95,222 @@ class _AddEditTaskScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isEdit ? "Edit Task" : "Add Task"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
+      backgroundColor: const Color(0xFFF5F6FA),
 
-              /// TITLE
-              TextFormField(
-                controller: titleController,
-                decoration: const InputDecoration(
-                  labelText: "Title",
-                ),
-                validator: (val) =>
-                val == null || val.isEmpty ? "Required" : null,
-              ),
+      body: Column(
+        children: [
 
-              const SizedBox(height: 12),
+          /// 🔥 HEADER
+          _header(context),
 
-              /// DESCRIPTION
-              TextFormField(
-                controller: descriptionController,
-                decoration: const InputDecoration(
-                  labelText: "Description",
+          /// FORM
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(30),
                 ),
               ),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
 
-              const SizedBox(height: 12),
+                    /// TITLE FIELD
+                    _inputField(
+                      controller: titleController,
+                      hint: "Task title",
+                      validator: (val) =>
+                      val == null || val.isEmpty ? "Required" : null,
+                    ),
 
-              /// DATE PICKER
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    selectedDate == null
-                        ? "No date selected"
-                        : "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}",
-                  ),
-                  TextButton(
-                    onPressed: _pickDate,
-                    child: const Text("Pick Date"),
-                  ),
-                ],
-              ),
+                    const SizedBox(height: 14),
 
-              const SizedBox(height: 12),
+                    /// DESCRIPTION FIELD
+                    _inputField(
+                      controller: descriptionController,
+                      hint: "Description",
+                      maxLines: 3,
+                    ),
 
-              /// PRIORITY DROPDOWN
-              DropdownButtonFormField<String>(
-                value: priority,
-                items: const [
-                  DropdownMenuItem(value: 'low', child: Text("Low")),
-                  DropdownMenuItem(value: 'medium', child: Text("Medium")),
-                  DropdownMenuItem(value: 'high', child: Text("High")),
-                ],
-                onChanged: (val) {
-                  setState(() {
-                    priority = val!;
-                  });
-                },
-                decoration: const InputDecoration(
-                  labelText: "Priority",
+                    const SizedBox(height: 20),
+
+                    /// DATE + PRIORITY
+                    Row(
+                      children: [
+
+                        /// DATE
+                        Expanded(
+                          child: _actionBox(
+                            icon: Icons.calendar_today,
+                            text: selectedDate == null
+                                ? "Select date"
+                                : "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}",
+                            onTap: _pickDate,
+                          ),
+                        ),
+
+                        const SizedBox(width: 12),
+
+                        /// PRIORITY
+                        Expanded(
+                          child: _actionBox(
+                            icon: Icons.flag,
+                            text: priority.toUpperCase(),
+                            onTap: _showPrioritySheet,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const Spacer(),
+
+                    /// SAVE BUTTON
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _saveTask,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          backgroundColor: const Color(0xFF6C63FF),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: Text(
+                          isEdit ? "Update Task" : "Add Task",
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-
-              const SizedBox(height: 20),
-
-              /// SAVE BUTTON
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _saveTask,
-                  child: Text(isEdit ? "Update Task" : "Add Task"),
-                ),
-              ),
-            ],
+            ),
           ),
+        ],
+      ),
+    );
+  }
+
+  /// HEADER
+  Widget _header(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(16, 50, 16, 20),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF6C63FF), Color(0xFF8E85FF)],
+        ),
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(40),
         ),
       ),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.pop(context),
+          ),
+          const SizedBox(width: 10),
+          Text(
+            isEdit ? "Edit Task" : "New Task",
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// INPUT FIELD
+  Widget _inputField({
+    required TextEditingController controller,
+    required String hint,
+    int maxLines = 1,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      maxLines: maxLines,
+      validator: validator,
+      decoration: InputDecoration(
+        hintText: hint,
+        filled: true,
+        fillColor: const Color(0xFFF1F3F6),
+        contentPadding:
+        const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
+  }
+
+  /// ACTION BOX (DATE + PRIORITY)
+  Widget _actionBox({
+    required IconData icon,
+    required String text,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding:
+        const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF1F3F6),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 18, color: const Color(0xFF6C63FF)),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                text,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// PRIORITY SELECT SHEET
+  void _showPrioritySheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _priorityItem("low"),
+            _priorityItem("medium"),
+            _priorityItem("high"),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _priorityItem(String value) {
+    return ListTile(
+      title: Text(value.toUpperCase()),
+      onTap: () {
+        setState(() {
+          priority = value;
+        });
+        Navigator.pop(context);
+      },
     );
   }
 }
