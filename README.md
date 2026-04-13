@@ -304,11 +304,70 @@ Screenshots of the application UI have been added to visually demonstrate:
 * Splash Screen
 * Login Screen
 * Signup Screen
-* UI components and layout
+* Task Screen
+* Add Task Screen
+* Logout Screen
 
 These provide a clear understanding of the user experience and design implementation.
 
 ---
+
+---
+
+## **Testing**
+
+The project includes **unit and state-level tests** to ensure reliability and maintainability.
+
+### **Test Coverage**
+
+* FirebaseAuthService (service layer)
+* AuthRemoteDataSource (data layer)
+* AuthRepositoryImpl (repository layer)
+* UseCases (business logic)
+* AuthNotifier (state management)
+
+### **Testing Approach**
+
+* Mock-based testing using `mocktail`
+* Isolation of layers (no real Firebase calls)
+* Verification of:
+
+  * Data transformation
+  * Error handling
+  * State transitions
+
+### **Run Tests**
+
+```bash
+flutter test
+```
+
+---
+
+## **Test Structure**
+
+```bash
+test/
+│
+├── core/
+│   └── services/
+│
+├── features/
+│   └── auth/
+│       ├── data/
+│       ├── domain/
+│       └── presentation/
+```
+
+---
+
+## **Platform Note**
+
+* The application has been developed and tested primarily for **Android**.
+* iOS support is not verified due to the absence of a macOS/iOS testing environment.
+
+---
+
 
 ## **Future Enhancements**
 
