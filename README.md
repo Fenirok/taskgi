@@ -172,7 +172,7 @@ flowchart TD
     Start[App Start]
     Init[Initialize Firebase]
     Splash[Splash Screen]
-    Check[Check Auth State (Stream)]
+    Check[Check Auth State - Stream]
     Decision{User Exists?}
     Task[Task Screen]
     Login[Login Screen]
